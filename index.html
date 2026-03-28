@@ -1,0 +1,1011 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Microsoft 365 Compliance Dashboard</title>
+  <style>
+    :root {
+      --bg: #eef3f8;
+      --surface: rgba(255, 255, 255, 0.88);
+      --surface-strong: #ffffff;
+      --text: #15233b;
+      --muted: #5f6f86;
+      --line: rgba(25, 43, 72, 0.12);
+      --brand: #0f6cbd;
+      --brand-deep: #0a4f8a;
+      --accent: #2d8cff;
+      --success: #198754;
+      --warning: #f0ad4e;
+      --danger: #d83b01;
+      --shadow: 0 18px 45px rgba(11, 35, 70, 0.12);
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 12px;
+      --max-width: 1240px;
+      --font-sans: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: var(--font-sans);
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(45, 140, 255, 0.2), transparent 32%),
+        radial-gradient(circle at right 20%, rgba(15, 108, 189, 0.18), transparent 28%),
+        linear-gradient(180deg, #f7fafe 0%, #eef3f8 100%);
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    .shell {
+      width: min(calc(100% - 32px), var(--max-width));
+      margin: 0 auto;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(16px);
+      background: rgba(238, 243, 248, 0.82);
+      border-bottom: 1px solid rgba(21, 35, 59, 0.06);
+    }
+
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      min-height: 78px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-badge {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(145deg, #0f6cbd, #2d8cff);
+      color: #fff;
+      font-weight: 700;
+      box-shadow: 0 14px 28px rgba(15, 108, 189, 0.3);
+    }
+
+    .brand h1 {
+      margin: 0;
+      font-size: 1rem;
+      letter-spacing: 0.02em;
+    }
+
+    .brand p {
+      margin: 3px 0 0;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      padding: 10px 14px;
+      border-radius: 999px;
+      color: var(--muted);
+      font-weight: 600;
+      transition: 0.2s ease;
+    }
+
+    .nav-links a:hover,
+    .nav-links a:focus-visible {
+      background: rgba(15, 108, 189, 0.1);
+      color: var(--brand);
+      outline: none;
+    }
+
+    .hero {
+      padding: 42px 0 22px;
+    }
+
+    .hero-panel {
+      background: linear-gradient(135deg, rgba(255, 255, 255, 0.95), rgba(243, 248, 255, 0.85));
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      box-shadow: var(--shadow);
+      border-radius: 32px;
+      padding: 32px;
+      display: grid;
+      grid-template-columns: minmax(0, 1.7fr) minmax(280px, 0.9fr);
+      gap: 24px;
+      overflow: hidden;
+      position: relative;
+      isolation: isolate;
+    }
+
+    .hero-panel::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -120px auto;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(45, 140, 255, 0.24), transparent 68%);
+      z-index: -1;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--brand);
+      background: rgba(15, 108, 189, 0.1);
+      padding: 8px 12px;
+      border-radius: 999px;
+    }
+
+    .hero h2 {
+      margin: 18px 0 12px;
+      font-size: clamp(2rem, 4vw, 3.5rem);
+      line-height: 1.06;
+      max-width: 12ch;
+    }
+
+    .hero p {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.7;
+      color: var(--muted);
+      max-width: 62ch;
+    }
+
+    .hero-metrics {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 14px;
+      align-self: center;
+    }
+
+    .hero-stat {
+      background: rgba(10, 24, 46, 0.88);
+      color: #fff;
+      border-radius: 22px;
+      padding: 18px 18px 16px;
+      box-shadow: 0 18px 35px rgba(7, 18, 36, 0.16);
+    }
+
+    .hero-stat strong {
+      display: block;
+      font-size: 1.7rem;
+      margin-bottom: 8px;
+    }
+
+    .hero-stat span {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.8);
+    }
+
+    main {
+      padding: 8px 0 48px;
+    }
+
+    section {
+      margin-top: 28px;
+    }
+
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 16px;
+      margin-bottom: 16px;
+    }
+
+    .section-head h3 {
+      margin: 0;
+      font-size: 1.45rem;
+    }
+
+    .section-head p {
+      margin: 6px 0 0;
+      color: var(--muted);
+    }
+
+    .panel {
+      background: var(--surface);
+      border: 1px solid rgba(255, 255, 255, 0.8);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .parameter-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .parameter-card {
+      position: relative;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 249, 255, 0.88));
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(20, 44, 74, 0.08);
+      padding: 22px;
+      min-height: 168px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .parameter-card h4 {
+      margin: 0;
+      font-size: 1rem;
+      line-height: 1.4;
+    }
+
+    .parameter-meta {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .parameter-meta strong {
+      color: var(--text);
+      font-size: 0.95rem;
+    }
+
+    .parameter-state {
+      margin-top: 14px;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .parameter-state.good {
+      color: var(--success);
+    }
+
+    .parameter-state.warn {
+      color: #a96900;
+    }
+
+    .parameter-state.risk {
+      color: var(--danger);
+    }
+
+    .parameter-icon {
+      position: absolute;
+      top: 18px;
+      right: 18px;
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      border: 1.5px solid rgba(21, 35, 59, 0.25);
+      display: grid;
+      place-items: center;
+      color: var(--text);
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .card {
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(245, 249, 255, 0.86));
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(20, 44, 74, 0.08);
+      padding: 18px;
+      min-height: 150px;
+    }
+
+    .card .label {
+      display: inline-block;
+      font-size: 0.78rem;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 18px;
+    }
+
+    .card .value {
+      font-size: 2.2rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+
+    .card .note {
+      color: var(--muted);
+      line-height: 1.5;
+      font-size: 0.92rem;
+    }
+
+    .trend {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .trend.warning {
+      color: #9c5a00;
+      background: rgba(240, 173, 78, 0.16);
+    }
+
+    .trend.danger {
+      color: #943000;
+      background: rgba(216, 59, 1, 0.12);
+    }
+
+    .trend.success {
+      color: #12643f;
+      background: rgba(25, 135, 84, 0.12);
+    }
+
+    .analytics-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(280px, 0.8fr);
+      gap: 18px;
+    }
+
+    .chart-wrap {
+      position: relative;
+      min-height: 380px;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .legend {
+      display: grid;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(15, 108, 189, 0.05);
+    }
+
+    .legend-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+    }
+
+    .swatch {
+      width: 12px;
+      height: 12px;
+      border-radius: 999px;
+      flex: none;
+    }
+
+    .legend-item span:last-child {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .table-tools {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .search {
+      min-width: 240px;
+      flex: 1;
+    }
+
+    .search input {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font: inherit;
+      background: rgba(255, 255, 255, 0.92);
+      color: var(--text);
+    }
+
+    .search input:focus {
+      outline: 2px solid rgba(15, 108, 189, 0.18);
+      border-color: rgba(15, 108, 189, 0.35);
+    }
+
+    .status-key {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.9rem;
+    }
+
+    .status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      background: rgba(18, 36, 64, 0.05);
+    }
+
+    .table-wrap {
+      overflow: auto;
+      border-radius: 18px;
+      border: 1px solid rgba(18, 36, 64, 0.08);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 880px;
+      background: rgba(255, 255, 255, 0.78);
+    }
+
+    thead {
+      background: rgba(15, 108, 189, 0.08);
+    }
+
+    th,
+    td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid rgba(18, 36, 64, 0.08);
+      vertical-align: middle;
+    }
+
+    th {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+    }
+
+    tbody tr:hover {
+      background: rgba(15, 108, 189, 0.04);
+    }
+
+    .score {
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.82rem;
+      min-width: 88px;
+    }
+
+    .badge.healthy {
+      background: rgba(25, 135, 84, 0.12);
+      color: var(--success);
+    }
+
+    .badge.watch {
+      background: rgba(240, 173, 78, 0.16);
+      color: #a96900;
+    }
+
+    .badge.risk {
+      background: rgba(216, 59, 1, 0.12);
+      color: var(--danger);
+    }
+
+    .reports-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 16px;
+    }
+
+    .report-card {
+      border-radius: var(--radius-md);
+      border: 1px solid rgba(18, 36, 64, 0.08);
+      padding: 18px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 248, 253, 0.88));
+    }
+
+    .report-card h4 {
+      margin: 0 0 10px;
+      font-size: 1.02rem;
+    }
+
+    .report-card p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .report-card .meta {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      color: var(--muted);
+      font-size: 0.88rem;
+    }
+
+    footer {
+      padding: 30px 0 60px;
+      color: var(--muted);
+      font-size: 0.92rem;
+    }
+
+    @media (max-width: 1080px) {
+      .cards,
+      .parameter-grid,
+      .reports-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .analytics-grid,
+      .hero-panel {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 720px) {
+      .shell {
+        width: min(calc(100% - 20px), var(--max-width));
+      }
+
+      .topbar-inner,
+      .section-head,
+      .table-tools {
+        align-items: flex-start;
+      }
+
+      .cards,
+      .parameter-grid,
+      .reports-grid,
+      .hero-metrics {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-panel,
+      .panel {
+        padding: 18px;
+      }
+
+      .nav-links {
+        gap: 4px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="shell topbar-inner">
+      <div class="brand">
+        <div class="brand-badge">M</div>
+        <div>
+          <h1>Microsoft 365 Compliance Dashboard</h1>
+          <p>Project-level benchmark tracking for security and compliance posture</p>
+        </div>
+      </div>
+      <nav class="nav-links" aria-label="Primary">
+        <a href="#overview">Overview</a>
+        <a href="#benchmarks">Benchmarks</a>
+        <a href="#reports">Reports</a>
+      </nav>
+    </div>
+  </header>
+
+  <div class="shell">
+    <section class="hero" id="overview">
+      <div class="hero-panel">
+        <div>
+          <div class="eyebrow">Compliance Benchmark Summary</div>
+          <h2>Operational visibility for Microsoft 365 risk and control gaps.</h2>
+          <p>
+            This sample dashboard is built for GitHub Pages and uses static data only. Replace the JavaScript data array later with live export values from Intune, Entra ID, Defender, Purview, and Secure Score.
+          </p>
+        </div>
+        <div class="hero-metrics" aria-label="Key metrics">
+          <div class="hero-stat">
+            <strong>76%</strong>
+            <span>Average control attainment across all benchmarks</span>
+          </div>
+          <div class="hero-stat">
+            <strong>6</strong>
+            <span>High-risk benchmarks below target threshold</span>
+          </div>
+          <div class="hero-stat">
+            <strong>78</strong>
+            <span>Secure Score baseline out of 100</span>
+          </div>
+          <div class="hero-stat">
+            <strong>24</strong>
+            <span>Tracked compliance benchmarks in this sample project</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <main>
+      <section aria-labelledby="parameters-title">
+        <div class="section-head">
+          <div>
+            <h3 id="parameters-title">Endpoint Compliance Parameters</h3>
+            <p>Top operational checks surfaced as quick-glance cards for device posture, patching, and tooling health.</p>
+          </div>
+        </div>
+        <div class="parameter-grid" id="parameterGrid"></div>
+      </section>
+
+      <section aria-labelledby="overview-title">
+        <div class="section-head">
+          <div>
+            <h3 id="overview-title">Overview</h3>
+            <p>Executive KPIs for the current Microsoft 365 compliance snapshot.</p>
+          </div>
+        </div>
+        <div class="cards">
+          <article class="card">
+            <span class="label">Devices Missing BitLocker Keys</span>
+            <div class="value">12%</div>
+            <div class="note">142 devices do not have escrowed recovery keys recorded in the tenant.</div>
+            <div class="trend danger">Needs remediation</div>
+          </article>
+          <article class="card">
+            <span class="label">MFA Enforcement Gaps</span>
+            <div class="value">8%</div>
+            <div class="note">57 user accounts remain outside enforced phishing-resistant or strong MFA coverage.</div>
+            <div class="trend warning">Review exceptions</div>
+          </article>
+          <article class="card">
+            <span class="label">Legacy Authentication Usage</span>
+            <div class="value">3.1%</div>
+            <div class="note">Legacy protocol sign-ins are still observed across a limited set of identities.</div>
+            <div class="trend warning">Down 1.4% MoM</div>
+          </article>
+          <article class="card">
+            <span class="label">Email DLP Violations</span>
+            <div class="value">27</div>
+            <div class="note">Purview policy hits over the last 30 days, concentrated in outbound finance mail.</div>
+            <div class="trend success">Stable workload</div>
+          </article>
+        </div>
+      </section>
+
+      <section aria-labelledby="analytics-title">
+        <div class="section-head">
+          <div>
+            <h3 id="analytics-title">Benchmark Distribution</h3>
+            <p>Chart showing how many benchmarks are in healthy, watchlist, and risk categories.</p>
+          </div>
+        </div>
+        <div class="analytics-grid">
+          <div class="panel chart-wrap">
+            <canvas id="benchmarkChart" aria-label="Compliance benchmark distribution chart" role="img"></canvas>
+          </div>
+          <aside class="panel">
+            <h3 style="margin-top: 0;">Category Snapshot</h3>
+            <p style="color: var(--muted); line-height: 1.6; margin-bottom: 18px;">
+              The chart is rendered with plain JavaScript canvas so the page stays lightweight and dependency-free.
+            </p>
+            <div class="legend" id="chartLegend"></div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="benchmarks" aria-labelledby="benchmarks-title">
+        <div class="section-head">
+          <div>
+            <h3 id="benchmarks-title">Benchmarks</h3>
+            <p>Sample compliance benchmark register with realistic target and current-state values.</p>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="table-tools">
+            <label class="search" for="benchmarkSearch">
+              <input id="benchmarkSearch" type="search" placeholder="Search benchmark, owner, or status">
+            </label>
+            <div class="status-key" aria-label="Status legend">
+              <span class="status-pill"><span class="swatch" style="background: var(--success);"></span>Healthy</span>
+              <span class="status-pill"><span class="swatch" style="background: var(--warning);"></span>Watchlist</span>
+              <span class="status-pill"><span class="swatch" style="background: var(--danger);"></span>Risk</span>
+            </div>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Benchmark</th>
+                  <th>Current</th>
+                  <th>Target</th>
+                  <th>Owner</th>
+                  <th>Trend</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="benchmarkTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <section id="reports" aria-labelledby="reports-title">
+        <div class="section-head">
+          <div>
+            <h3 id="reports-title">Reports</h3>
+            <p>Static report cards that can later link to exported CSVs, PDFs, or tenant dashboards.</p>
+          </div>
+        </div>
+        <div class="reports-grid">
+          <article class="report-card">
+            <h4>Executive Compliance Summary</h4>
+            <p>High-level snapshot of control adoption, critical exceptions, and top remediation priorities for leadership.</p>
+            <div class="meta"><span>Audience: Leadership</span><span>Updated: Mar 2026</span></div>
+          </article>
+          <article class="report-card">
+            <h4>Identity & Access Exceptions</h4>
+            <p>Review of MFA gaps, break-glass governance, guest access posture, and conditional access enforcement coverage.</p>
+            <div class="meta"><span>Audience: IAM Team</span><span>Updated: Mar 2026</span></div>
+          </article>
+          <article class="report-card">
+            <h4>Data Protection Findings</h4>
+            <p>Summary of sensitivity labels, DLP incidents, mailbox forwarding risks, and retention policy consistency.</p>
+            <div class="meta"><span>Audience: Compliance Ops</span><span>Updated: Mar 2026</span></div>
+          </article>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      Sample dashboard for GitHub Pages deployment. Replace the sample dataset in the embedded script with real benchmark exports when production data is available.
+    </footer>
+  </div>
+
+  <script>
+    // Replace this sample array with your real top-level dashboard parameters later.
+    // Example sources: Intune device inventory, SCCM status, Defender, Windows update compliance, and asset lifecycle reports.
+    const topParameters = [
+      { title: "BitLocker Disabled", primaryLabel: "Laptops", primaryValue: 0, secondaryLabel: "Desktops", secondaryValue: 0, statusText: "No impacted devices", tone: "good" },
+      { title: "SCCM Client Broken", primaryLabel: "Laptops", primaryValue: 52, secondaryLabel: "Desktops", secondaryValue: 0, statusText: "Client repair required", tone: "risk" },
+      { title: "Antivirus / Firewall", primaryLabel: "Unhealthy", primaryValue: 3, secondaryLabel: "Healthy", secondaryValue: "1,186", statusText: "Few devices need attention", tone: "warn" },
+      { title: "Windows Pro vs Enterprise", primaryLabel: "Compliant", primaryValue: "98.70%", secondaryLabel: "Drifted", secondaryValue: "1.30%", statusText: "License alignment is strong", tone: "good" },
+      { title: "BitLocker Key Not Available", primaryLabel: "Laptops", primaryValue: 0, secondaryLabel: "Desktops", secondaryValue: 0, statusText: "Recovery keys fully available", tone: "good" },
+      { title: "SCCM Client Inactive", primaryLabel: "Laptops", primaryValue: 31, secondaryLabel: "Desktops", secondaryValue: 0, statusText: "Inactive agents detected", tone: "risk" },
+      { title: "Windows Patching", primaryLabel: "Compliant", primaryValue: "99.7%", secondaryLabel: "Pending", secondaryValue: "0.3%", statusText: "Patch compliance on target", tone: "good" },
+      { title: "Windows Versions", primaryLabel: "Supported", primaryValue: "96.2%", secondaryLabel: "Outdated", secondaryValue: "3.8%", statusText: "Legacy builds remain", tone: "warn" },
+      { title: "128-bit BitLocker", primaryLabel: "Laptops", primaryValue: 1, secondaryLabel: "Desktops", secondaryValue: 0, statusText: "Encryption strength review needed", tone: "warn" },
+      { title: "CyberArk Not Installed", primaryLabel: "Laptops", primaryValue: 6, secondaryLabel: "Desktops", secondaryValue: 0, statusText: "Privileged access tooling missing", tone: "risk" },
+      { title: "Windows Server Patching", primaryLabel: "Compliant", primaryValue: "37.93%", secondaryLabel: "Pending", secondaryValue: "62.07%", statusText: "Server estate needs remediation", tone: "risk" },
+      { title: "Laps Missing", primaryLabel: "Laptops", primaryValue: 0, secondaryLabel: "Desktops", secondaryValue: 0, statusText: "Local admin password controls healthy", tone: "good" }
+    ];
+
+    // Replace this sample array with real compliance benchmark data later.
+    // Suggested source systems: Entra ID, Intune, Microsoft Defender, Purview, and Secure Score exports.
+    const benchmarkData = [
+      { benchmark: "Devices Missing BitLocker Keys", current: "12%", target: "< 5%", owner: "Endpoint Team", trend: "+2%", score: 58 },
+      { benchmark: "MFA Enforcement Gaps", current: "8%", target: "< 2%", owner: "Identity Team", trend: "-1%", score: 64 },
+      { benchmark: "Legacy Authentication Usage", current: "3.1%", target: "0%", owner: "Identity Team", trend: "-1.4%", score: 71 },
+      { benchmark: "Email DLP Violations", current: "27 incidents", target: "< 15", owner: "Compliance Ops", trend: "+4", score: 62 },
+      { benchmark: "Conditional Access Coverage", current: "91%", target: "> 98%", owner: "Identity Team", trend: "+3%", score: 83 },
+      { benchmark: "Secure Score Baseline", current: "78/100", target: "> 85", owner: "Security PMO", trend: "+2", score: 78 },
+      { benchmark: "Inactive Guest Accounts", current: "46 accounts", target: "< 10", owner: "Identity Governance", trend: "-8", score: 55 },
+      { benchmark: "Privileged Role Review Completion", current: "88%", target: "100%", owner: "Identity Governance", trend: "+6%", score: 80 },
+      { benchmark: "Mailbox Forwarding to External Domains", current: "19 mailboxes", target: "0", owner: "Messaging Team", trend: "-2", score: 60 },
+      { benchmark: "Defender for Endpoint Coverage", current: "94%", target: "> 98%", owner: "SOC", trend: "+1%", score: 86 },
+      { benchmark: "High-Severity Vulnerability Remediation SLA", current: "82%", target: "> 95%", owner: "Endpoint Team", trend: "+5%", score: 74 },
+      { benchmark: "Sensitivity Label Adoption", current: "68%", target: "> 85%", owner: "Compliance Ops", trend: "+7%", score: 69 },
+      { benchmark: "Retention Policy Coverage", current: "89%", target: "> 95%", owner: "Records Team", trend: "+2%", score: 81 },
+      { benchmark: "Audit Logging Enabled Workloads", current: "96%", target: "100%", owner: "Platform Team", trend: "0%", score: 88 },
+      { benchmark: "Break-Glass Account Monitoring", current: "75%", target: "100%", owner: "SOC", trend: "+10%", score: 67 },
+      { benchmark: "Admin Consent Workflow Adoption", current: "72%", target: "> 90%", owner: "Identity Team", trend: "+4%", score: 70 },
+      { benchmark: "Unmanaged Device Access Events", current: "34 events", target: "< 10", owner: "Endpoint Team", trend: "-6", score: 59 },
+      { benchmark: "Teams External Sharing Controls", current: "85%", target: "> 95%", owner: "Collaboration Team", trend: "+3%", score: 79 },
+      { benchmark: "SharePoint Anonymous Links", current: "61 links", target: "< 20", owner: "Collaboration Team", trend: "-9", score: 57 },
+      { benchmark: "Passwordless Authentication Adoption", current: "48%", target: "> 75%", owner: "Identity Team", trend: "+9%", score: 66 },
+      { benchmark: "Insider Risk Policy Coverage", current: "63%", target: "> 85%", owner: "Compliance Ops", trend: "+5%", score: 68 },
+      { benchmark: "Endpoint Compliance Policy Success", current: "92%", target: "> 97%", owner: "Endpoint Team", trend: "+1%", score: 84 },
+      { benchmark: "Privileged Access Workstation Usage", current: "58%", target: "> 90%", owner: "SOC", trend: "+8%", score: 61 },
+      { benchmark: "Phishing Simulation Failure Rate", current: "6.5%", target: "< 3%", owner: "Awareness Team", trend: "-0.9%", score: 73 }
+    ];
+
+    function getStatus(score) {
+      if (score >= 80) return "Healthy";
+      if (score >= 65) return "Watchlist";
+      return "Risk";
+    }
+
+    function getBadgeClass(status) {
+      return status === "Healthy" ? "healthy" : status === "Watchlist" ? "watch" : "risk";
+    }
+
+    const parameterGrid = document.getElementById("parameterGrid");
+    const tableBody = document.getElementById("benchmarkTableBody");
+    const searchInput = document.getElementById("benchmarkSearch");
+
+    function renderParameters(items) {
+      parameterGrid.innerHTML = items.map((item) => `
+        <article class="parameter-card">
+          <div class="parameter-icon" aria-hidden="true">&#8250;</div>
+          <div>
+            <h4>${item.title}</h4>
+            <div class="parameter-meta">
+              <span>${item.primaryLabel}: <strong>${item.primaryValue}</strong></span>
+              <span>${item.secondaryLabel}: <strong>${item.secondaryValue}</strong></span>
+            </div>
+          </div>
+          <div class="parameter-state ${item.tone}">${item.statusText}</div>
+        </article>
+      `).join("");
+    }
+
+    function renderTable(rows) {
+      tableBody.innerHTML = rows.map((item) => {
+        const status = getStatus(item.score);
+        return `
+          <tr>
+            <td>${item.benchmark}</td>
+            <td class="score">${item.current}</td>
+            <td>${item.target}</td>
+            <td>${item.owner}</td>
+            <td>${item.trend}</td>
+            <td><span class="badge ${getBadgeClass(status)}">${status}</span></td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function filterRows(query) {
+      const normalized = query.trim().toLowerCase();
+      if (!normalized) return benchmarkData;
+      return benchmarkData.filter((item) =>
+        [item.benchmark, item.current, item.target, item.owner, getStatus(item.score)]
+          .join(" ")
+          .toLowerCase()
+          .includes(normalized)
+      );
+    }
+
+    searchInput.addEventListener("input", (event) => {
+      renderTable(filterRows(event.target.value));
+    });
+
+    function renderLegend(counts) {
+      const legend = document.getElementById("chartLegend");
+      const order = [
+        { label: "Healthy", color: "#198754", value: counts.Healthy || 0 },
+        { label: "Watchlist", color: "#f0ad4e", value: counts.Watchlist || 0 },
+        { label: "Risk", color: "#d83b01", value: counts.Risk || 0 }
+      ];
+
+      legend.innerHTML = order.map((item) => `
+        <div class="legend-item">
+          <div class="legend-label">
+            <span class="swatch" style="background:${item.color};"></span>
+            <span>${item.label}</span>
+          </div>
+          <span>${item.value} benchmarks</span>
+        </div>
+      `).join("");
+    }
+
+    function renderChart(data) {
+      const canvas = document.getElementById("benchmarkChart");
+      const context = canvas.getContext("2d");
+      const ratio = window.devicePixelRatio || 1;
+      const width = canvas.clientWidth;
+      const height = canvas.clientHeight;
+      canvas.width = width * ratio;
+      canvas.height = height * ratio;
+      context.setTransform(ratio, 0, 0, ratio, 0, 0);
+      context.clearRect(0, 0, width, height);
+
+      const counts = data.reduce((acc, item) => {
+        const status = getStatus(item.score);
+        acc[status] = (acc[status] || 0) + 1;
+        return acc;
+      }, {});
+
+      renderLegend(counts);
+
+      const bars = [
+        { label: "Healthy", value: counts.Healthy || 0, color: "#198754" },
+        { label: "Watchlist", value: counts.Watchlist || 0, color: "#f0ad4e" },
+        { label: "Risk", value: counts.Risk || 0, color: "#d83b01" }
+      ];
+
+      const padding = { top: 30, right: 20, bottom: 52, left: 54 };
+      const plotWidth = width - padding.left - padding.right;
+      const plotHeight = height - padding.top - padding.bottom;
+      const maxValue = Math.max(...bars.map((bar) => bar.value), 1);
+      const barWidth = plotWidth / bars.length * 0.55;
+      const gap = plotWidth / bars.length * 0.45;
+
+      context.lineWidth = 1;
+      context.strokeStyle = "rgba(21, 35, 59, 0.12)";
+      context.fillStyle = "#5f6f86";
+      context.font = "12px Segoe UI, Arial, sans-serif";
+
+      for (let i = 0; i <= maxValue; i += 2) {
+        const y = padding.top + plotHeight - (i / maxValue) * plotHeight;
+        context.beginPath();
+        context.moveTo(padding.left, y);
+        context.lineTo(width - padding.right, y);
+        context.stroke();
+        context.fillText(String(i), 22, y + 4);
+      }
+
+      context.beginPath();
+      context.moveTo(padding.left, padding.top);
+      context.lineTo(padding.left, padding.top + plotHeight);
+      context.lineTo(width - padding.right, padding.top + plotHeight);
+      context.strokeStyle = "rgba(21, 35, 59, 0.22)";
+      context.stroke();
+
+      bars.forEach((bar, index) => {
+        const x = padding.left + gap / 2 + index * (barWidth + gap);
+        const barHeight = (bar.value / maxValue) * plotHeight;
+        const y = padding.top + plotHeight - barHeight;
+
+        context.fillStyle = bar.color;
+        context.beginPath();
+        context.roundRect(x, y, barWidth, barHeight, 14);
+        context.fill();
+
+        context.fillStyle = "#15233b";
+        context.font = "700 14px Segoe UI, Arial, sans-serif";
+        context.fillText(String(bar.value), x + barWidth / 2 - 6, y - 10);
+
+        context.fillStyle = "#5f6f86";
+        context.font = "12px Segoe UI, Arial, sans-serif";
+        context.fillText(bar.label, x + barWidth / 2 - context.measureText(bar.label).width / 2, height - 18);
+      });
+    }
+
+    renderParameters(topParameters);
+    renderTable(benchmarkData);
+    renderChart(benchmarkData);
+    window.addEventListener("resize", () => renderChart(benchmarkData));
+  </script>
+</body>
+</html>
